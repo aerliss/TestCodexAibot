@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cabinet</title><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<h1>Личный кабинет</h1>
+<p>ID: {{ user.tg_id }} | Кредиты: {{ user.credits }} | Tier: {{ user.tier }}</p>
+{% for c in cards %}
+<div class="card">Job {{ c.job }} ({{ c.kind }}, {{ c.status }}) — <a href="{{ c.url }}" target="_blank">скачать</a></div>
+{% endfor %}
+</body></html>

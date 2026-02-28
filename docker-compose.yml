@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: aibot
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports: ["5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
+
+  minio:
+    image: minio/minio:RELEASE.2024-09-22T00-33-43Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports: ["9000:9000", "9001:9001"]
+    volumes: ["minio_data:/data"]
+
+  bot:
+    build: .
+    command: python -m bot.main_bot
+    env_file: .env
+    depends_on: [postgres, redis, minio]
+
+  worker:
+    build: .
+    command: python -m worker.main_worker
+    env_file: .env
+    depends_on: [postgres, redis, minio]
+
+  webapp:
+    build: .
+    command: uvicorn webapp.main_webapp:app --host 0.0.0.0 --port 8080
+    env_file: .env
+    ports: ["8080:8080"]
+    depends_on: [postgres, redis, minio]
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
