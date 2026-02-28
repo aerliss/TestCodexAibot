@@ -1,80 +1,111 @@
-# Commercial AI Telegram Bot (aiogram 3.x)
+Коммерческий Telegram бот на AI (aiogram 3.x)
 
-Production-ready starter for a monetized Telegram bot with:
-- AI image generation, image editing, video generation.
-- Telegram Stars (XTR) payments and credit economy.
-- Referral and subscription models.
-- Personal cabinet (Telegram WebApp / Mini App) on FastAPI.
-- Admin functionality via `/admin` + admin web route.
-- Microservices with Redis queue workers and MinIO object storage.
+Готовый стартовый шаблон для монетизированного Telegram бота с:
 
-## Stack
-- **Bot:** aiogram 3.x
-- **Worker:** async queue consumer via Redis
-- **DB:** PostgreSQL + SQLAlchemy async
-- **Cache/Queue/Sessions:** Redis
-- **Object storage:** MinIO
-- **WebApp:** FastAPI + Jinja2
-- **Retries:** tenacity
+    Генерацией изображений, редактированием изображений и генерацией видео с помощью ИИ.
 
-## Project structure
+    Платежами через Telegram Stars (XTR) и системой кредитов.
 
-- `bot/` – Telegram bot entrypoint and handlers.
-- `worker/` – async generation pipeline and providers.
-- `webapp/` – Mini App & admin web pages.
-- `common/` – shared config, DB, models, storage.
-- `scripts/init_db.py` – DB schema bootstrap.
+    Реферальной программой и моделью подписок.
 
-## Deployment & setup
+    Личным кабинетом (Telegram WebApp / Mini App) на FastAPI.
 
-1. Copy env template:
-   ```bash
-   cp .env.example .env
-   ```
-2. Edit required variables in `.env`:
-   - `BOT_TOKEN`, `BOT_USERNAME`
-   - `GEMINI_API_KEY`
-   - `WEBAPP_BASE_URL`
-   - pricing (`COST_*`, `PACK_*`, `SUB_*`)
-   - `ADMIN_IDS`
-3. Build and run:
-   ```bash
-   docker compose up -d --build
-   ```
-4. Initialize DB schema:
-   ```bash
-   docker compose exec bot python scripts/init_db.py
-   ```
-5. (Optional) scale workers:
-   ```bash
-   docker compose up -d --scale worker=5
-   ```
+    Функционалом администратора через /admin + веб-маршрут для админки.
 
-## Gemini integration notes
+    Микросервисной архитектурой с очередями на Redis и объектным хранилищем MinIO.
 
-Default provider is `gemini` (`PROVIDER=gemini`).
-Models are configured with:
-- `GEMINI_IMAGE_STANDARD_MODEL=gemini-2.5-flash-image`
-- `GEMINI_IMAGE_PRO_MODEL=gemini-3-pro-image-preview`
-- `GEMINI_VIDEO_MODEL=veo-3.1-generate-preview`
+Стек технологий
 
-Provider abstraction supports extending to Stability/Kling/Runway (stubs included).
+    Бот: aiogram 3.x
 
-## WebApp auth in this starter
+    Воркер: асинхронный потребитель очереди через Redis
 
-- `POST /auth/dev/{tg_id}` returns session token and cabinet URL.
-- Replace it with real Telegram WebApp initData verification before production.
+    База данных: PostgreSQL + SQLAlchemy (асинхронный режим)
 
-## Compliance checklist before production
+    Кэш/Очереди/Сессии: Redis
 
-- Implement strict content policy + NSFW moderation.
-- Add legal pages (Terms/Privacy/Refunds/GDPR delete endpoint).
-- Add backups for Postgres/Redis/MinIO.
-- Enable Prometheus/Grafana and bot alerting.
+    Объектное хранилище: MinIO
 
-## Tests
+    Веб-приложение: FastAPI + Jinja2
 
-```bash
+    Повторные попытки: tenacity
+
+Структура проекта
+
+    bot/ – точка входа Telegram бота и обработчики.
+
+    worker/ – асинхронный конвейер генерации и провайдеры.
+
+    webapp/ – Mini App и веб-страницы администратора.
+
+    common/ – общая конфигурация, БД, модели, хранилище.
+
+    scripts/init_db.py – инициализация схемы базы данных.
+
+Развертывание и настройка
+
+    Скопируйте шаблон файла с переменными окружения:
+    bash
+
+    cp .env.example .env
+
+    Отредактируйте необходимые переменные в .env:
+
+        BOT_TOKEN, BOT_USERNAME
+
+        GEMINI_API_KEY
+
+        WEBAPP_BASE_URL
+
+        цены (COST_*, PACK_*, SUB_*)
+
+        ADMIN_IDS
+
+    Соберите и запустите:
+    bash
+
+    docker compose up -d --build
+
+    Инициализируйте схему базы данных:
+    bash
+
+    docker compose exec bot python scripts/init_db.py
+
+    (Опционально) масштабируйте воркеры:
+    bash
+
+    docker compose up -d --scale worker=5
+
+Особенности интеграции с Gemini
+
+Провайдер по умолчанию — gemini (PROVIDER=gemini).
+Модели настраиваются с помощью:
+
+    GEMINI_IMAGE_STANDARD_MODEL=gemini-2.5-flash-image
+
+    GEMINI_IMAGE_PRO_MODEL=gemini-3-pro-image-preview
+
+    GEMINI_VIDEO_MODEL=veo-3.1-generate-preview
+
+Абстракция провайдера позволяет легко добавить поддержку Stability AI, Kling, Runway (заготовки включены).
+Авторизация в WebApp в этом стартовом шаблоне
+
+    POST /auth/dev/{tg_id} возвращает токен сессии и URL личного кабинета.
+
+    Перед продакшеном замените на реальную проверку initData от Telegram WebApp.
+
+Контрольный список для выхода в продакшен
+
+    Внедрить строгую политику контента + модерацию NSFW.
+
+    Добавить юридические страницы (Условия использования, Политика конфиденциальности, Возвраты, GDPR-эндпоинт для удаления данных).
+
+    Настроить резервное копирование Postgres/Redis/MinIO.
+
+    Включить Prometheus/Grafana и оповещения для бота.
+
+Тесты
+bash
+
 pytest -q
-```
 
