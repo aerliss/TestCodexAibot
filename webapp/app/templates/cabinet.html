@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Личный кабинет</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <h1>Личный кабинет</h1>
+  <p>Пользователь: {{ user.username or user.tg_id }}</p>
+  <p>Кредиты: <b>{{ user.credits }}</b>, tier: {{ user.tier }}</p>
+  <p>История задач: {{ jobs_count }}</p>
+  <section>
+    {% for f in files %}
+    <div class="card">
+      <div>Job: {{ f.job_id }} ({{ f.kind }}) — {{ f.status }}</div>
+      <a href="{{ f.url }}" target="_blank">Скачать файл</a>
+    </div>
+    {% endfor %}
+  </section>
+</body>
+</html>
